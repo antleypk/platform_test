@@ -29,7 +29,7 @@ def db_insert(email):
     response = table.put_item(
     Item={ 'email': email}
     )
-    print 'response: '+str(response)
+    print ('response: '+str(response))
 
     
 def lambda_handler(event, context):
