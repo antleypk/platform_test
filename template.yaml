@@ -1,0 +1,120 @@
+AWSTemplateFormatVersion: 2010-09-09
+Transform: AWS::Serverless-2016-10-31
+Description: antleypk solution for 'https://github.com/IntuitiveWebSolutions/PDPlatformEngineerProject#deliverables'
+Resources:
+  GetUsers:
+    Type: AWS::Serverless::Function
+    Properties:
+      FunctionName: SAMGetUsers
+      Handler: GetUsers.lambda_handler
+      Runtime: python2.7 
+      CodeUri: src 
+      MemorySize: 128 
+      Timeout: 30
+      Policies:
+        - AWSLambdaBasicExecutionRole
+        - AmazonDynamoDBFullAccess
+      Events:
+        MyEndpoint:
+          Type: Api 
+          Properties:
+            Path: /user
+            Method: get
+      Environment:
+        Variables:
+          Users: !Ref SAMUsers
+  AddUser:
+    Type: AWS::Serverless::Function
+    Properties:
+      FunctionName: SAMAddUser
+      Handler: AddUser.lambda_handler
+      Runtime: python2.7 
+      CodeUri: src 
+      MemorySize: 128 
+      Timeout: 30
+      Policies:
+        - AWSLambdaBasicExecutionRole
+        - AmazonDynamoDBFullAccess
+      Events:
+        MyEndpoint:
+          Type: Api 
+          Properties:
+            Path: /user/{email}
+            Method: put
+      Environment:
+        Variables:
+          Users: !Ref SAMUsers
+  DeleteUser:
+    Type: AWS::Serverless::Function
+    Properties:
+      FunctionName: SAMDeleteUser
+      Handler: DeleteUser.lambda_handler
+      Runtime: python2.7 
+      CodeUri: src 
+      MemorySize: 128 
+      Timeout: 30
+      Policies:
+        - AWSLambdaBasicExecutionRole
+        - AmazonDynamoDBFullAccess
+      Events:
+        MyEndpoint:
+          Type: Api 
+          Properties:
+            Path: /user/{email}
+            Method: delete
+      Environment:
+        Variables:
+          Users: !Ref SAMUsers    
+  EmailUsersAPI:
+    Type: AWS::Serverless::Function
+    Properties:
+      FunctionName: SAMEmailUsersAPI
+      Handler: EmailUsers.lambda_handler
+      Runtime: python2.7 
+      CodeUri: src 
+      MemorySize: 128 
+      Timeout: 30
+      Policies:
+        - AWSLambdaBasicExecutionRole
+        - AmazonDynamoDBFullAccess
+        - AmazonSESFullAccess
+      Events:
+        MyEndpoint:
+          Type: Api 
+          Properties:
+            Path: /mailtest
+            Method: get
+      Environment:
+        Variables:
+          Users: !Ref SAMUsers
+  EmailUsersCloudWatch:
+    Type: AWS::Serverless::Function
+    Properties:
+      FunctionName: SAMEmailUsersCloudWatch
+      Handler: EmailUsers.lambda_handler
+      Runtime: python2.7 
+      CodeUri: src 
+      MemorySize: 128 
+      Timeout: 30
+      Policies:
+        - AWSLambdaBasicExecutionRole
+        - AmazonDynamoDBFullAccess
+        - AmazonSESFullAccess
+      Events:
+        DailyEmail:
+          Type: Schedule
+          Properties:
+            Schedule: rate(1 day)
+      Environment:
+        Variables:
+          Users: !Ref SAMUsers
+        
+  SAMUsers:
+    Type: AWS::Serverless::SimpleTable
+    Properties:
+      PrimaryKey:
+        Name: email
+        Type: String
+      ProvisionedThroughput:
+        ReadCapacityUnits: 1
+        WriteCapacityUnits: 1
