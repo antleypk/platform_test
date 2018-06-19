@@ -3,7 +3,7 @@ Description: antleypk solution for 'https://github.com/IntuitiveWebSolutions/PDP
 Resources:
   AddUser:
     Properties:
-      CodeUri: s3://antleypk-intuitivewebsolutions-platformengineer-test/5d3f6412622c8207f3cb13b44fc94eb9
+      CodeUri: s3://antleypk-intuitivewebsolutions-platformengineer-test/cdd98ef8550e534e9dde5cc5f19a9fcd
       Environment:
         Variables:
           Users:
@@ -20,12 +20,12 @@ Resources:
       Policies:
       - AWSLambdaBasicExecutionRole
       - AmazonDynamoDBFullAccess
-      Runtime: python2.7
+      Runtime: python3.6
       Timeout: 30
     Type: AWS::Serverless::Function
   DeleteUser:
     Properties:
-      CodeUri: s3://antleypk-intuitivewebsolutions-platformengineer-test/5d3f6412622c8207f3cb13b44fc94eb9
+      CodeUri: s3://antleypk-intuitivewebsolutions-platformengineer-test/cdd98ef8550e534e9dde5cc5f19a9fcd
       Environment:
         Variables:
           Users:
@@ -42,12 +42,12 @@ Resources:
       Policies:
       - AWSLambdaBasicExecutionRole
       - AmazonDynamoDBFullAccess
-      Runtime: python2.7
+      Runtime: python3.6
       Timeout: 30
     Type: AWS::Serverless::Function
   EmailUsersAPI:
     Properties:
-      CodeUri: s3://antleypk-intuitivewebsolutions-platformengineer-test/5d3f6412622c8207f3cb13b44fc94eb9
+      CodeUri: s3://antleypk-intuitivewebsolutions-platformengineer-test/cdd98ef8550e534e9dde5cc5f19a9fcd
       Environment:
         Variables:
           Users:
@@ -65,12 +65,12 @@ Resources:
       - AWSLambdaBasicExecutionRole
       - AmazonDynamoDBFullAccess
       - AmazonSESFullAccess
-      Runtime: python2.7
+      Runtime: python3.6
       Timeout: 30
     Type: AWS::Serverless::Function
   EmailUsersCloudWatch:
     Properties:
-      CodeUri: s3://antleypk-intuitivewebsolutions-platformengineer-test/5d3f6412622c8207f3cb13b44fc94eb9
+      CodeUri: s3://antleypk-intuitivewebsolutions-platformengineer-test/cdd98ef8550e534e9dde5cc5f19a9fcd
       Environment:
         Variables:
           Users:
@@ -87,12 +87,12 @@ Resources:
       - AWSLambdaBasicExecutionRole
       - AmazonDynamoDBFullAccess
       - AmazonSESFullAccess
-      Runtime: python2.7
+      Runtime: python3.6
       Timeout: 30
     Type: AWS::Serverless::Function
   GetUsers:
     Properties:
-      CodeUri: s3://antleypk-intuitivewebsolutions-platformengineer-test/5d3f6412622c8207f3cb13b44fc94eb9
+      CodeUri: s3://antleypk-intuitivewebsolutions-platformengineer-test/cdd98ef8550e534e9dde5cc5f19a9fcd
       Environment:
         Variables:
           Users:
@@ -109,9 +109,56 @@ Resources:
       Policies:
       - AWSLambdaBasicExecutionRole
       - AmazonDynamoDBFullAccess
-      Runtime: python2.7
+      Runtime: python3.6
       Timeout: 30
     Type: AWS::Serverless::Function
+  ProjectAPI:
+    Properties:
+      DefinitionBody:
+        basePath: /Prod
+        host: u2biz48gxc.execute-api.us-east-1.amazonaws.com
+        info:
+          title: antleypkCode
+          version: '1.0'
+        paths:
+          /mailtest:
+            get:
+              responses: {}
+              x-amazon-apigateway-integration:
+                httpMethod: POST
+                passthroughBehavior: when_no_match
+                type: aws_proxy
+                uri: arn:aws:apigateway:us-east-1:lambda:path/2015-03-31/functions/arn:aws:lambda:us-east-1:153477074805:function:SAMEmailUsersAPI/invocations
+          /user:
+            get:
+              responses: {}
+              x-amazon-apigateway-integration:
+                httpMethod: POST
+                passthroughBehavior: when_no_match
+                type: aws_proxy
+                uri: arn:aws:apigateway:us-east-1:lambda:path/2015-03-31/functions/arn:aws:lambda:us-east-1:153477074805:function:SAMGetUsers/invocations
+          /user/{email}:
+            delete:
+              responses: {}
+              x-amazon-apigateway-integration:
+                httpMethod: POST
+                passthroughBehavior: when_no_match
+                type: aws_proxy
+                uri: arn:aws:apigateway:us-east-1:lambda:path/2015-03-31/functions/arn:aws:lambda:us-east-1:153477074805:function:SAMDeleteUser/invocations
+            put:
+              responses: {}
+              x-amazon-apigateway-integration:
+                httpMethod: POST
+                passthroughBehavior: when_no_match
+                type: aws_proxy
+                uri: arn:aws:apigateway:us-east-1:lambda:path/2015-03-31/functions/arn:aws:lambda:us-east-1:153477074805:function:SAMAddUser/invocations
+        schemes:
+        - https
+        swagger: '2.0'
+        x-amazon-apigateway-binary-media-types:
+        - '*/*'
+      StageName: Dev
+    Type: AWS::Serverless::Api
   SAMUsers:
     Properties:
       PrimaryKey:
