@@ -61,6 +61,7 @@ Resources:
       Policies:
         - AWSLambdaBasicExecutionRole
         - AmazonDynamoDBFullAccess
+        - AmazonAPIGatewayInvokeFullAccess 
       Events:
         MyEndpoint:
           Type: Api 
@@ -139,6 +140,27 @@ Resources:
     Properties:
       FunctionName: SAMEmailUsersCloudWatch
       Handler: EmailUsers.lambda_handler
+      Runtime: python3.6 
+      CodeUri: src 
+      MemorySize: 128 
+      Timeout: 30
+      Policies:
+        - AWSLambdaBasicExecutionRole
+        - AmazonDynamoDBFullAccess
+        - AmazonSESFullAccess
+      Events:
+        DailyEmail:
+          Type: Schedule
+          Properties:
+            Schedule: rate(1 day)
+      Environment:
+        Variables:
+          Users: !Ref SAMUsers
+  UnitTest:
+    Type: AWS::Serverless::Function
+    Properties:
+      FunctionName: SAMUnitTest
+      Handler: UnitTest.lambda_handler
       Runtime: python3.6 
       CodeUri: src 
       MemorySize: 128 

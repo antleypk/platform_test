@@ -3,7 +3,7 @@ Description: antleypk solution for 'https://github.com/IntuitiveWebSolutions/PDP
 Resources:
   AddUser:
     Properties:
-      CodeUri: s3://antleypk-intuitivewebsolutions-platformengineer-test/cdd98ef8550e534e9dde5cc5f19a9fcd
+      CodeUri: s3://antleypk-intuitivewebsolutions-platformengineer-test/cf10608a4d3f6010b8dfd84a371ab758
       Environment:
         Variables:
           Users:
@@ -25,7 +25,7 @@ Resources:
     Type: AWS::Serverless::Function
   DeleteUser:
     Properties:
-      CodeUri: s3://antleypk-intuitivewebsolutions-platformengineer-test/cdd98ef8550e534e9dde5cc5f19a9fcd
+      CodeUri: s3://antleypk-intuitivewebsolutions-platformengineer-test/cf10608a4d3f6010b8dfd84a371ab758
       Environment:
         Variables:
           Users:
@@ -47,7 +47,7 @@ Resources:
     Type: AWS::Serverless::Function
   EmailUsersAPI:
     Properties:
-      CodeUri: s3://antleypk-intuitivewebsolutions-platformengineer-test/cdd98ef8550e534e9dde5cc5f19a9fcd
+      CodeUri: s3://antleypk-intuitivewebsolutions-platformengineer-test/cf10608a4d3f6010b8dfd84a371ab758
       Environment:
         Variables:
           Users:
@@ -70,7 +70,7 @@ Resources:
     Type: AWS::Serverless::Function
   EmailUsersCloudWatch:
     Properties:
-      CodeUri: s3://antleypk-intuitivewebsolutions-platformengineer-test/cdd98ef8550e534e9dde5cc5f19a9fcd
+      CodeUri: s3://antleypk-intuitivewebsolutions-platformengineer-test/cf10608a4d3f6010b8dfd84a371ab758
       Environment:
         Variables:
           Users:
@@ -92,7 +92,7 @@ Resources:
     Type: AWS::Serverless::Function
   GetUsers:
     Properties:
-      CodeUri: s3://antleypk-intuitivewebsolutions-platformengineer-test/cdd98ef8550e534e9dde5cc5f19a9fcd
+      CodeUri: s3://antleypk-intuitivewebsolutions-platformengineer-test/cf10608a4d3f6010b8dfd84a371ab758
       Environment:
         Variables:
           Users:
@@ -109,6 +109,7 @@ Resources:
       Policies:
       - AWSLambdaBasicExecutionRole
       - AmazonDynamoDBFullAccess
+      - AmazonAPIGatewayInvokeFullAccess
       Runtime: python3.6
       Timeout: 30
     Type: AWS::Serverless::Function
@@ -168,4 +169,26 @@ Resources:
         ReadCapacityUnits: 1
         WriteCapacityUnits: 1
     Type: AWS::Serverless::SimpleTable
+  UnitTest:
+    Properties:
+      CodeUri: s3://antleypk-intuitivewebsolutions-platformengineer-test/cf10608a4d3f6010b8dfd84a371ab758
+      Environment:
+        Variables:
+          Users:
+            Ref: SAMUsers
+      Events:
+        DailyEmail:
+          Properties:
+            Schedule: rate(1 day)
+          Type: Schedule
+      FunctionName: SAMUnitTest
+      Handler: UnitTest.lambda_handler
+      MemorySize: 128
+      Policies:
+      - AWSLambdaBasicExecutionRole
+      - AmazonDynamoDBFullAccess
+      - AmazonSESFullAccess
+      Runtime: python3.6
+      Timeout: 30
+    Type: AWS::Serverless::Function
 Transform: AWS::Serverless-2016-10-31
