@@ -5,7 +5,7 @@ import os
 
 
 def remove(email):
-    print 'email to be remove: ' + email
+    print ('email to be remove: ' + email)
 
     dynamodb = boto3.resource('dynamodb')
     table = dynamodb.Table(os.environ['Users'])
@@ -15,9 +15,9 @@ def remove(email):
     meta = response['ResponseMetadata']
     status = meta['HTTPStatusCode']
     
-    print 'status: ' +str(status)
+    print ('status: ' +str(status))
     
-    print 'response: ' + str(response)
+    print ('response: ' + str(response))
     
     return email 
 

@@ -2,12 +2,59 @@ AWSTemplateFormatVersion: 2010-09-09
 Transform: AWS::Serverless-2016-10-31
 Description: antleypk solution for 'https://github.com/IntuitiveWebSolutions/PDPlatformEngineerProject#deliverables'
 Resources:
+  ProjectAPI:
+    Type: AWS::Serverless::Api
+    Properties:
+      StageName: Dev
+      DefinitionBody:
+        swagger: "2.0"
+        info:
+          version: "1.0"
+          title: "antleypkCode"
+        host: "u2biz48gxc.execute-api.us-east-1.amazonaws.com"
+        basePath: "/Prod"
+        schemes:
+        - "https"
+        x-amazon-apigateway-binary-media-types:
+          - '*/*'
+        paths:
+          /mailtest:
+            get:
+              responses: {}
+              x-amazon-apigateway-integration:
+                uri: "arn:aws:apigateway:us-east-1:lambda:path/2015-03-31/functions/arn:aws:lambda:us-east-1:153477074805:function:SAMEmailUsersAPI/invocations"
+                passthroughBehavior: "when_no_match"
+                httpMethod: "POST"
+                type: "aws_proxy"
+          /user:
+            get:
+              responses: {}
+              x-amazon-apigateway-integration:
+                uri: "arn:aws:apigateway:us-east-1:lambda:path/2015-03-31/functions/arn:aws:lambda:us-east-1:153477074805:function:SAMGetUsers/invocations"
+                passthroughBehavior: "when_no_match"
+                httpMethod: "POST"
+                type: "aws_proxy"
+          /user/{email}:
+            put:
+              responses: {}
+              x-amazon-apigateway-integration:
+                uri: "arn:aws:apigateway:us-east-1:lambda:path/2015-03-31/functions/arn:aws:lambda:us-east-1:153477074805:function:SAMAddUser/invocations"
+                passthroughBehavior: "when_no_match"
+                httpMethod: "POST"
+                type: "aws_proxy"
+            delete:
+              responses: {}
+              x-amazon-apigateway-integration:
+                uri: "arn:aws:apigateway:us-east-1:lambda:path/2015-03-31/functions/arn:aws:lambda:us-east-1:153477074805:function:SAMDeleteUser/invocations"
+                passthroughBehavior: "when_no_match"
+                httpMethod: "POST"
+                type: "aws_proxy"
   GetUsers:
     Type: AWS::Serverless::Function
     Properties:
       FunctionName: SAMGetUsers
       Handler: GetUsers.lambda_handler
-      Runtime: python2.7 
+      Runtime: python3.6
       CodeUri: src 
       MemorySize: 128 
       Timeout: 30
@@ -28,7 +75,7 @@ Resources:
     Properties:
       FunctionName: SAMAddUser
       Handler: AddUser.lambda_handler
-      Runtime: python2.7 
+      Runtime: python3.6 
       CodeUri: src 
       MemorySize: 128 
       Timeout: 30
@@ -49,7 +96,7 @@ Resources:
     Properties:
       FunctionName: SAMDeleteUser
       Handler: DeleteUser.lambda_handler
-      Runtime: python2.7 
+      Runtime: python3.6 
       CodeUri: src 
       MemorySize: 128 
       Timeout: 30
@@ -70,7 +117,7 @@ Resources:
     Properties:
       FunctionName: SAMEmailUsersAPI
       Handler: EmailUsers.lambda_handler
-      Runtime: python2.7 
+      Runtime: python3.6 
       CodeUri: src 
       MemorySize: 128 
       Timeout: 30
@@ -92,7 +139,7 @@ Resources:
     Properties:
       FunctionName: SAMEmailUsersCloudWatch
       Handler: EmailUsers.lambda_handler
-      Runtime: python2.7 
+      Runtime: python3.6 
       CodeUri: src 
       MemorySize: 128 
       Timeout: 30
@@ -108,7 +155,6 @@ Resources:
       Environment:
         Variables:
           Users: !Ref SAMUsers
-        
   SAMUsers:
     Type: AWS::Serverless::SimpleTable
     Properties:
@@ -117,4 +163,4 @@ Resources:
         Type: String
       ProvisionedThroughput:
         ReadCapacityUnits: 1
-        WriteCapacityUnits: 1
+        WriteCapacityUnits: 1       

@@ -13,7 +13,7 @@ import os
 import decimal
 
 def add_to_users(email):
-    print 'email: '+str(email)
+    print ('email: '+str(email))
     db_insert(email)
     success = 0
     data = {}
@@ -33,8 +33,8 @@ def db_insert(email):
 
     
 def lambda_handler(event, context):
-    print 'context: ' + str(context)
-    print 'event: ' + str(event)
+    print ('context: ' + str(context))
+    print ('event: ' + str(event))
     email = str(event['pathParameters']['email'])
     data = add_to_users(email)
     

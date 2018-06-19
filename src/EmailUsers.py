@@ -100,7 +100,7 @@ def get_message():
     trim_var = len(message)-2
     for b in range(0,trim_var):
         quote = quote + message_one[b]
-    print 'quote: '+quote    
+    print ('quote: '+quote )   
     return quote
     
 def get_users():
@@ -114,7 +114,7 @@ def get_users():
         email = i['email']
         print 'email at 119: '+str(email)
         users.append(email)
-    print 'completed scan'
+    print ('completed scan')
     return users
 
 
