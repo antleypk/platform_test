@@ -3,7 +3,7 @@ Description: antleypk solution for 'https://github.com/IntuitiveWebSolutions/PDP
 Resources:
   AddUser:
     Properties:
-      CodeUri: s3://antleypk-intuitivewebsolutions-platformengineer-test/cf10608a4d3f6010b8dfd84a371ab758
+      CodeUri: s3://antleypk-intuitivewebsolutions-platformengineer-test/2b741645e3af0be99cf6cf317be6721f
       Environment:
         Variables:
           Users:
@@ -13,6 +13,8 @@ Resources:
           Properties:
             Method: put
             Path: /user/{email}
+            RestApiId:
+              Ref: ProjectAPI
           Type: Api
       FunctionName: SAMAddUser
       Handler: AddUser.lambda_handler
@@ -23,9 +25,49 @@ Resources:
       Runtime: python3.6
       Timeout: 30
     Type: AWS::Serverless::Function
+  ConfigLambdaPermission:
+    DependsOn:
+    - ProjectAPI
+    - GetUsers
+    Properties:
+      Action: lambda:InvokeFunction
+      FunctionName:
+        Ref: GetUsers
+      Principal: apigateway.amazonaws.com
+    Type: AWS::Lambda::Permission
+  ConfigLambdaPermission1:
+    DependsOn:
+    - ProjectAPI
+    - AddUser
+    Properties:
+      Action: lambda:InvokeFunction
+      FunctionName:
+        Ref: AddUser
+      Principal: apigateway.amazonaws.com
+    Type: AWS::Lambda::Permission
+  ConfigLambdaPermission2:
+    DependsOn:
+    - ProjectAPI
+    - DeleteUser
+    Properties:
+      Action: lambda:InvokeFunction
+      FunctionName:
+        Ref: DeleteUser
+      Principal: apigateway.amazonaws.com
+    Type: AWS::Lambda::Permission
+  ConfigLambdaPermission3:
+    DependsOn:
+    - ProjectAPI
+    - EmailUsersAPI
+    Properties:
+      Action: lambda:InvokeFunction
+      FunctionName:
+        Ref: EmailUsersAPI
+      Principal: apigateway.amazonaws.com
+    Type: AWS::Lambda::Permission
   DeleteUser:
     Properties:
-      CodeUri: s3://antleypk-intuitivewebsolutions-platformengineer-test/cf10608a4d3f6010b8dfd84a371ab758
+      CodeUri: s3://antleypk-intuitivewebsolutions-platformengineer-test/2b741645e3af0be99cf6cf317be6721f
       Environment:
         Variables:
           Users:
@@ -35,6 +77,8 @@ Resources:
           Properties:
             Method: delete
             Path: /user/{email}
+            RestApiId:
+              Ref: ProjectAPI
           Type: Api
       FunctionName: SAMDeleteUser
       Handler: DeleteUser.lambda_handler
@@ -47,7 +91,7 @@ Resources:
     Type: AWS::Serverless::Function
   EmailUsersAPI:
     Properties:
-      CodeUri: s3://antleypk-intuitivewebsolutions-platformengineer-test/cf10608a4d3f6010b8dfd84a371ab758
+      CodeUri: s3://antleypk-intuitivewebsolutions-platformengineer-test/2b741645e3af0be99cf6cf317be6721f
       Environment:
         Variables:
           Users:
@@ -57,6 +101,8 @@ Resources:
           Properties:
             Method: get
             Path: /mailtest
+            RestApiId:
+              Ref: ProjectAPI
           Type: Api
       FunctionName: SAMEmailUsersAPI
       Handler: EmailUsers.lambda_handler
@@ -70,7 +116,7 @@ Resources:
     Type: AWS::Serverless::Function
   EmailUsersCloudWatch:
     Properties:
-      CodeUri: s3://antleypk-intuitivewebsolutions-platformengineer-test/cf10608a4d3f6010b8dfd84a371ab758
+      CodeUri: s3://antleypk-intuitivewebsolutions-platformengineer-test/2b741645e3af0be99cf6cf317be6721f
       Environment:
         Variables:
           Users:
@@ -92,7 +138,7 @@ Resources:
     Type: AWS::Serverless::Function
   GetUsers:
     Properties:
-      CodeUri: s3://antleypk-intuitivewebsolutions-platformengineer-test/cf10608a4d3f6010b8dfd84a371ab758
+      CodeUri: s3://antleypk-intuitivewebsolutions-platformengineer-test/2b741645e3af0be99cf6cf317be6721f
       Environment:
         Variables:
           Users:
@@ -102,6 +148,8 @@ Resources:
           Properties:
             Method: get
             Path: /user
+            RestApiId:
+              Ref: ProjectAPI
           Type: Api
       FunctionName: SAMGetUsers
       Handler: GetUsers.lambda_handler
@@ -171,7 +219,7 @@ Resources:
     Type: AWS::Serverless::SimpleTable
   UnitTest:
     Properties:
-      CodeUri: s3://antleypk-intuitivewebsolutions-platformengineer-test/cf10608a4d3f6010b8dfd84a371ab758
+      CodeUri: s3://antleypk-intuitivewebsolutions-platformengineer-test/2b741645e3af0be99cf6cf317be6721f
       Environment:
         Variables:
           Users:
@@ -185,7 +233,7 @@ Resources:
       Handler: UnitTest.lambda_handler
       MemorySize: 128
       Policies:
-      - AWSLambdaBasicExecutionRole
+      - AWSLambdaFullAccess
       - AmazonDynamoDBFullAccess
       - AmazonSESFullAccess
       Runtime: python3.6

@@ -112,7 +112,7 @@ def get_users():
     items = x['Items']
     for i in items:
         email = i['email']
-        print 'email at 119: '+str(email)
+        print ('email at 119: '+str(email))
         users.append(email)
     print ('completed scan')
     return users
@@ -132,9 +132,13 @@ def lambda_handler(event, context):
     message = get_message()
     users = get_users()
     email_machine(users, message)
+    
+    data = {'exit_code': '0',
+        'message': 'emails sent' }
+    
     response = {
         "statusCode": 200,
-        "body": json.dumps('emails sent')
+        "body": json.dumps(data)
         }
     return response
 

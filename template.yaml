@@ -49,6 +49,15 @@ Resources:
                 passthroughBehavior: "when_no_match"
                 httpMethod: "POST"
                 type: "aws_proxy"
+  ConfigLambdaPermission:
+    Type: "AWS::Lambda::Permission"
+    DependsOn:
+    - ProjectAPI
+    - GetUsers
+    Properties:
+      Action: lambda:InvokeFunction
+      FunctionName: !Ref GetUsers
+      Principal: apigateway.amazonaws.com
   GetUsers:
     Type: AWS::Serverless::Function
     Properties:
@@ -68,9 +77,20 @@ Resources:
           Properties:
             Path: /user
             Method: get
+            RestApiId:
+              Ref: ProjectAPI
       Environment:
         Variables:
           Users: !Ref SAMUsers
+  ConfigLambdaPermission1:
+    Type: "AWS::Lambda::Permission"
+    DependsOn:
+    - ProjectAPI
+    - AddUser
+    Properties:
+      Action: lambda:InvokeFunction
+      FunctionName: !Ref AddUser
+      Principal: apigateway.amazonaws.com
   AddUser:
     Type: AWS::Serverless::Function
     Properties:
@@ -89,9 +109,20 @@ Resources:
           Properties:
             Path: /user/{email}
             Method: put
+            RestApiId:
+              Ref: ProjectAPI
       Environment:
         Variables:
           Users: !Ref SAMUsers
+  ConfigLambdaPermission2:
+    Type: "AWS::Lambda::Permission"
+    DependsOn:
+    - ProjectAPI
+    - DeleteUser
+    Properties:
+      Action: lambda:InvokeFunction
+      FunctionName: !Ref DeleteUser
+      Principal: apigateway.amazonaws.com
   DeleteUser:
     Type: AWS::Serverless::Function
     Properties:
@@ -110,9 +141,20 @@ Resources:
           Properties:
             Path: /user/{email}
             Method: delete
+            RestApiId:
+              Ref: ProjectAPI
       Environment:
         Variables:
-          Users: !Ref SAMUsers    
+          Users: !Ref SAMUsers
+  ConfigLambdaPermission3:
+    Type: "AWS::Lambda::Permission"
+    DependsOn:
+    - ProjectAPI
+    - EmailUsersAPI
+    Properties:
+      Action: lambda:InvokeFunction
+      FunctionName: !Ref EmailUsersAPI
+      Principal: apigateway.amazonaws.com    
   EmailUsersAPI:
     Type: AWS::Serverless::Function
     Properties:
@@ -132,6 +174,8 @@ Resources:
           Properties:
             Path: /mailtest
             Method: get
+            RestApiId:
+              Ref: ProjectAPI
       Environment:
         Variables:
           Users: !Ref SAMUsers
@@ -166,7 +210,7 @@ Resources:
       MemorySize: 128 
       Timeout: 30
       Policies:
-        - AWSLambdaBasicExecutionRole
+        - AWSLambdaFullAccess 
         - AmazonDynamoDBFullAccess
         - AmazonSESFullAccess
       Events:
